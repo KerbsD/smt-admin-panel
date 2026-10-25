@@ -1,0 +1,258 @@
+"use client";
+
+import {
+  ArrowRight,
+  CalendarClock,
+  CalendarDays,
+  Images,
+  PenTool,
+  RefreshCw,
+  ShoppingBag,
+} from "lucide-react";
+import Link from "next/link";
+
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatCard } from "@/components/ui/stat-card";
+import { formatBookingSlot, formatDate } from "@/lib/format";
+import { useBookings } from "@/modules/Booking/useBookings";
+import { BookingStatusBadge } from "@/modules/Booking/BookingStatusBadge";
+import { useDesigns } from "@/modules/Design/useDesigns";
+import { useMerch } from "@/modules/Merch/useMerch";
+import { usePortfolio } from "@/modules/Portfolio/usePortfolio";
+
+const RECENT_LIMIT = 6;
+
+/** Count-only query: limit 1 still returns the filtered total in `pagination`. */
+const COUNT_ONLY = { limit: 1, offset: 0 } as const;
+
+export default function Dashboard() {
+  const recentBookings = useBookings({
+    limit: RECENT_LIMIT,
+    offset: 0,
+    sort: "createdAt",
+    order: "desc",
+  });
+  const pendingBookings = useBookings({ ...COUNT_ONLY, status: "pending" });
+  const publishedPortfolio = usePortfolio({ ...COUNT_ONLY, published: true });
+  const publishedMerch = useMerch({ ...COUNT_ONLY, published: true });
+  const publishedDesigns = useDesigns({ ...COUNT_ONLY, published: true });
+
+  const totalBookings = recentBookings.data?.pagination.total;
+  const bookings = recentBookings.data?.data ?? [];
+
+  const isRefreshing =
+    recentBookings.isFetching ||
+    pendingBookings.isFetching ||
+    publishedPortfolio.isFetching ||
+    publishedMerch.isFetching ||
+    publishedDesigns.isFetching;
+
+  const refreshAll = () => {
+    void Promise.all([
+      recentBookings.refetch(),
+      pendingBookings.refetch(),
+      publishedPortfolio.refetch(),
+      publishedMerch.refetch(),
+      publishedDesigns.refetch(),
+    ]);
+  };
+
+  const statCards = [
+    {
+      label: "Pending bookings",
+      value: pendingBookings.data?.pagination.total ?? "—",
+      hint: "Awaiting confirmation",
+      icon: CalendarClock,
+      tone: "amber" as const,
+    },
+    {
+      label: "Total bookings",
+      value: totalBookings ?? "—",
+      hint: "All time",
+      icon: CalendarDays,
+      tone: "default" as const,
+    },
+    {
+      label: "Portfolio live",
+      value: publishedPortfolio.data?.pagination.total ?? "—",
+      hint: "Published pieces",
+      icon: Images,
+      tone: "emerald" as const,
+    },
+    {
+      label: "Merch live",
+      value: publishedMerch.data?.pagination.total ?? "—",
+      hint: "Published products",
+      icon: ShoppingBag,
+      tone: "sky" as const,
+    },
+    {
+      label: "Designs live",
+      value: publishedDesigns.data?.pagination.total ?? "—",
+      hint: "Published designs",
+      icon: PenTool,
+      tone: "default" as const,
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Studio overview"
+        title="Dashboard"
+        description="A quick read on requests, the public catalogue, and what needs attention."
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refreshAll}
+            disabled={isRefreshing}
+            className="gap-2"
+          >
+            <RefreshCw className={isRefreshing ? "size-4 animate-spin" : "size-4"} />
+            Refresh
+          </Button>
+        }
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {statCards.map((stat) => (
+          <StatCard key={stat.label} {...stat} />
+        ))}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
+        <Card className="overflow-hidden">
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <div>
+              <h2 className="text-sm font-semibold">Recent bookings</h2>
+              <p className="text-xs text-muted-foreground">Newest requests first</p>
+            </div>
+            <Link
+              href="/bookings"
+              className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+            >
+              View all
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+
+          {recentBookings.isError ? (
+            <div className="p-5">
+              <Alert variant="error" title="Could not load recent bookings">
+                {recentBookings.error instanceof Error
+                  ? recentBookings.error.message
+                  : "Unknown error."}
+              </Alert>
+            </div>
+          ) : recentBookings.isPending ? (
+            <div className="divide-y divide-border">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="flex items-center gap-4 px-5 py-4">
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-36" />
+                    <Skeleton className="h-3 w-48" />
+                  </div>
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </div>
+              ))}
+            </div>
+          ) : bookings.length === 0 ? (
+            <div className="p-5">
+              <EmptyState
+                icon={CalendarDays}
+                title="No bookings yet"
+                description="Requests from the public site will show up here."
+              />
+            </div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {bookings.map((booking) => (
+                <li key={booking.id}>
+                  <Link
+                    href="/bookings"
+                    className="flex flex-col gap-2 px-5 py-3.5 transition-colors hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{booking.name}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {booking.email} · requested {formatBookingSlot(booking.scheduledAt[0])}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <span className="text-[11px] text-muted-foreground">
+                        {formatDate(booking.createdAt)}
+                      </span>
+                      <BookingStatusBadge status={booking.status} />
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+
+        <Card className="p-5">
+          <h2 className="text-sm font-semibold">Manage the studio</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Jump straight into the section you need.
+          </p>
+
+          <div className="mt-4 space-y-2">
+            {[
+              {
+                href: "/bookings",
+                label: "Review bookings",
+                description: "Confirm dates and leave notes",
+                icon: CalendarDays,
+              },
+              {
+                href: "/portfolio",
+                label: "Curate portfolio",
+                description: "Publish finished work",
+                icon: Images,
+              },
+              {
+                href: "/merch",
+                label: "Update merch",
+                description: "Prices, drops, and preorders",
+                icon: ShoppingBag,
+              },
+              {
+                href: "/design",
+                label: "Manage designs",
+                description: "Flash and original pieces",
+                icon: PenTool,
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group flex items-center gap-3 rounded-lg border border-border px-3 py-2.5 transition-colors hover:bg-muted/50"
+                >
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:text-foreground">
+                    <Icon className="size-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium">{item.label}</span>
+                    <span className="block truncate text-[11px] text-muted-foreground">
+                      {item.description}
+                    </span>
+                  </span>
+                  <ArrowRight className="size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </Link>
+              );
+            })}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
