@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -15,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { RemoteImage } from "@/components/ui/remote-image";
 import { Switch } from "@/components/ui/switch";
@@ -45,8 +47,9 @@ interface MerchFormDialogProps {
 export function MerchFormDialog({ product, open, onOpenChange }: MerchFormDialogProps) {
   const create = useCreateMerch();
   const update = useUpdateMerch();
+  const [isUploading, setIsUploading] = useState(false);
   const isEdit = Boolean(product);
-  const isPending = create.isPending || update.isPending;
+  const isPending = create.isPending || update.isPending || isUploading;
 
   const {
     register,
@@ -137,17 +140,25 @@ export function MerchFormDialog({ product, open, onOpenChange }: MerchFormDialog
               </Field>
 
               <Field
-                label="Image URL"
+                label="Image"
                 htmlFor="imageUrl"
                 error={errors.imageUrl?.message}
-                hint="Site-relative path or an https URL."
+                hint="Upload a file or paste an image URL."
                 required
               >
-                <Input
-                  id="imageUrl"
-                  placeholder="/merch/hoodie.png"
-                  aria-invalid={Boolean(errors.imageUrl)}
-                  {...register("imageUrl")}
+                <Controller
+                  control={control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <ImageUpload
+                      id="imageUrl"
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="merch"
+                      onUploadingChange={setIsUploading}
+                      disabled={isPending}
+                    />
+                  )}
                 />
               </Field>
             </div>

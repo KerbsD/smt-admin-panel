@@ -114,6 +114,70 @@ The backend issues a short-lived **access token** in the JSON body and a rotatin
 - All management screens call the `/admin/*` endpoints. Nothing is persisted in
   component state beyond UI concerns.
 
+## Image uploads
+
+Portfolio, design, and merch images are stored in a **public Supabase Storage
+bucket**. Uploads go through the API (`POST /admin/uploads`) instead of the browser
+calling Supabase directly, so the service-role key never ships to the client.
+
+Backend setup (`smt-be/.env`):
+
+```dotenv
+SUPABASE_URL=https://<project-ref>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+SUPABASE_STORAGE_BUCKET=<public-bucket-name>
+```
+
+Leave all three unset to disable uploads; the endpoint then responds with `503`
+and forms can still use manually pasted URLs.
+
+The endpoint accepts one multipart image (`file`) plus a `folder`
+(`portfolio`, `merch`, `design`, or `misc`), verifies the bytes with `file-type`
+(the browser-supplied MIME type is not trusted), caps the file at 8 MB, and returns:
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://<project-ref>.supabase.co/storage/v1/object/public/<bucket>/portfolio/<uuid>.jpg",
+    "path": "portfolio/<uuid>.jpg",
+    "contentType": "image/jpeg",
+    "size": 123456
+  }
+}
+```
+
+On the client, `ImageUpload` (`src/components/ui/image-upload.tsx`) provides the
+dropzone, client-side type/size checks, progress state, and a manual URL fallback.
+Wire it to a form field with a `Controller`:
+
+```tsx
+<Controller
+  control={control}
+  name="imageUrl"
+  render={({ field }) => (
+    <Field
+      label="Image"
+      htmlFor="imageUrl"
+      error={errors.imageUrl?.message}
+      required
+    >
+      <ImageUpload
+        id="imageUrl"
+        value={field.value}
+        onChange={field.onChange}
+        folder="portfolio"
+        onUploadingChange={setImageUploading}
+      />
+    </Field>
+  )}
+/>
+```
+
+Use `folder="merch"` or `folder="design"` in the other dialogs. Include the uploader's
+pending state in the dialog's submit `isPending` so a form can't be saved halfway
+through an upload.
+
 ## Notes on Next.js 16
 
 This project uses `cacheComponents` and `partialPrefetching`. Any client hook that reads

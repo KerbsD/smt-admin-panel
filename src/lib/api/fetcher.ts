@@ -176,22 +176,28 @@ export interface RequestOptions {
   /** Set false for the auth endpoints that rely on cookies instead of a bearer token. */
   auth?: boolean;
   signal?: AbortSignal;
+  /** Request timeout in ms. Uploads override the 20s default. */
+  timeoutMs?: number;
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, query, auth = true, signal } = options;
+  const { method = "GET", body, query, auth = true, signal, timeoutMs = 20_000 } = options;
   const url = buildUrl(path, query);
-  const timeoutSignal = AbortSignal.timeout(20_000);
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+
+  // FormData must keep the browser-generated multipart boundary, so don't set
+  // Content-Type and don't JSON-encode the body.
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
 
   const execute = (token: string | null) => {
     const headers = new Headers({ Accept: "application/json" });
-    if (body !== undefined) headers.set("Content-Type", "application/json");
+    if (body !== undefined && !isFormData) headers.set("Content-Type", "application/json");
     if (auth && token) headers.set("Authorization", `Bearer ${token}`);
 
     return fetch(url, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
       credentials: "include",
       cache: "no-store",
       signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
