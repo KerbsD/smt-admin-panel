@@ -8,7 +8,7 @@ import {
 
 import { useBookings } from "@/modules/Booking/hooks/useBooking";
 
-import { useDesigns } from "@/modules/Design/useDesigns";
+import { useDesigns } from "@/modules/Design/hooks/useDesigns";
 import { useMerch } from "@/modules/Merch/useMerch";
 import { usePortfolio } from "@/modules/Portfolio/usePortfolio";
 
