@@ -6,7 +6,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
-import { useBookings } from "@/modules/Booking/useBookings";
+import { useBookings } from "@/modules/Booking/hooks/useBooking";
 
 import { useDesigns } from "@/modules/Design/useDesigns";
 import { useMerch } from "@/modules/Merch/useMerch";
