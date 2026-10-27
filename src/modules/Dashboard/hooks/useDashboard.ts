@@ -9,8 +9,8 @@ import {
 import { useBookings } from "@/modules/Booking/hooks/useBooking";
 
 import { useDesigns } from "@/modules/Design/hooks/useDesigns";
-import { useMerch } from "@/modules/Merch/useMerch";
-import { usePortfolio } from "@/modules/Portfolio/usePortfolio";
+import { useMerch } from "@/modules/Merch/hooks/useMerch";
+import { usePortfolio } from "@/modules/Portfolio/hooks/usePortfolio";
 
 const RECENT_LIMIT = 6;
 const COUNT_ONLY = { limit: 1, offset: 0 } as const;
