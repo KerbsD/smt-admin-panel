@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { AuthCardSkeleton } from "@/components/layouts/AuthCardSkeleton";
-import { ResendVerification } from "@/modules/Auth/Misc/ResendVerification";
+import { ResendVerification } from "@/modules/Auth/ResendVerification";
 
 export const metadata: Metadata = {
   title: "Resend verification",
