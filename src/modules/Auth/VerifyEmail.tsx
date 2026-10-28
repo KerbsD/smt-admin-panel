@@ -12,13 +12,11 @@ import { Alert } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
-import { ResendVerificationForm } from "@/modules/Auth/Misc/ResendVerificationForm";
-
-import useHandleVerifyEmail from "@/modules/Auth/Misc/useVerifyEmail";
+import { ResendVerificationForm } from "./components/ResendVerificationForm";
+import useVerifyEmail from "./hooks/useVerifyEmail";
 
 export function VerifyEmail() {
-  const { isVerifying, verify, mutate, isHydrated, token } =
-    useHandleVerifyEmail();
+  const { isVerifying, verify, mutate, isHydrated, token } = useVerifyEmail();
 
   return (
     <div className="w-full space-y-5">

@@ -8,7 +8,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { navigation } from "@/configs/navigation";
 import { useAuth } from "@/context/AuthProvider";
-import { useLogout } from "@/modules/Auth/Misc/useLogout";
+import { useLogout } from "@/modules/Auth/hooks/useLogout";
 import { initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
 

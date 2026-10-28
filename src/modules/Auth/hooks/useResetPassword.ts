@@ -1,22 +1,21 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { resetPassword as resetPasswordRequest } from "@/api/auth";
-import { queryKeys } from "@/lib/query-keys";
-import { useAuthStore } from "@/store/useAuthStore";
-
 import {
   resetPasswordSchema,
   type ResetPasswordValues,
 } from "@/configs/schemas/auth";
 import { ApiError } from "@/lib/api/fetcher";
 import { applyApiErrors } from "@/lib/form-errors";
+import { queryKeys } from "@/lib/query-keys";
 import { useHashParam, useHydrated } from "@/lib/use-hash";
+import { useAuthStore } from "@/store/useAuthStore";
 
-export function useResetPassword(token: string) {
+function useResetPasswordMutation(token: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -30,10 +29,10 @@ export function useResetPassword(token: string) {
   });
 }
 
-function useHandleResetPassword() {
+function useResetPassword() {
   const token = useHashParam("token");
   const isHydrated = useHydrated();
-  const reset = useResetPassword(token);
+  const reset = useResetPasswordMutation(token);
 
   const {
     register,
@@ -72,4 +71,4 @@ function useHandleResetPassword() {
   return { onSubmit, errors, reset, token, isHydrated, register };
 }
 
-export default useHandleResetPassword;
+export default useResetPassword;

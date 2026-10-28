@@ -17,11 +17,11 @@ import { PasswordInput } from "@/components/ui/password-input";
 
 import { Spinner } from "@/components/ui/spinner";
 
-import useHandleResetPassword from "./useResetPassword";
+import useResetPassword from "./hooks/useResetPassword";
 
 export function ResetPassword() {
   const { onSubmit, errors, reset, token, isHydrated, register } =
-    useHandleResetPassword();
+    useResetPassword();
 
   if (!isHydrated) {
     return (

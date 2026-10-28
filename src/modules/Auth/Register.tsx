@@ -1,23 +1,22 @@
 "use client";
 
-import { MailCheck } from "lucide-react";
 import Link from "next/link";
 
 import {
   AuthHeading,
   authButton,
-  authButtonOutline,
   authForm,
   authInput,
   authLink,
 } from "@/components/auth/auth-ui";
 import { Alert } from "@/components/ui/alert";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-import useHandleRegister from "./useRegister";
+import { RegisterSuccess } from "./components/RegisterSuccess";
+import useRegister from "./hooks/useRegister";
 
 export function Register() {
   const {
@@ -27,41 +26,10 @@ export function Register() {
     pendingEmail,
     successMessage,
     registerMutation,
-  } = useHandleRegister();
+  } = useRegister();
 
   if (pendingEmail) {
-    return (
-      <div className="w-full space-y-5">
-        <span className="flex size-11 items-center justify-center rounded-full bg-emerald-600/15 text-emerald-700">
-          <MailCheck className="size-5" />
-        </span>
-
-        <AuthHeading title="Check your inbox">
-          We sent a verification link to{" "}
-          <span className="font-semibold text-neutral-900">{pendingEmail}</span>
-          . The link expires in 24 hours.
-        </AuthHeading>
-
-        <Alert variant="success">{successMessage}</Alert>
-
-        <p className="text-xs text-neutral-600">
-          Click the link in the email to verify your address. If it expired, you
-          can request a new one.
-        </p>
-
-        <div className="flex flex-col gap-3">
-          <Link
-            href={`/resend-verification?email=${encodeURIComponent(pendingEmail)}`}
-            className={`${buttonVariants({ variant: "outline" })} ${authButtonOutline}`}
-          >
-            Resend verification email
-          </Link>
-          <Link href="/login" className={`${buttonVariants()} ${authButton}`}>
-            Go to log in
-          </Link>
-        </div>
-      </div>
-    );
+    return <RegisterSuccess email={pendingEmail} message={successMessage} />;
   }
 
   return (

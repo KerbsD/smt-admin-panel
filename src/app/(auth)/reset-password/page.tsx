@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ResetPassword } from "@/modules/Auth/Misc/ResetPassword";
+import { ResetPassword } from "@/modules/Auth/ResetPassword";
 
 export const metadata: Metadata = {
   title: "Reset password",

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useHandleResendVerification } from "./usePasswordFlows";
+import useResendVerification from "../hooks/useResendVerification";
 
 interface ResendVerificationFormProps {
   defaultEmail?: string;
@@ -20,7 +20,7 @@ export function ResendVerificationForm({
   onSent,
 }: ResendVerificationFormProps) {
   const { onSubmit, sentMessage, register, errors, resend } =
-    useHandleResendVerification({
+    useResendVerification({
       defaultEmail,
       onSent,
     });

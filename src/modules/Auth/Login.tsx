@@ -15,10 +15,10 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-import useHandleLogin from "./useLogin";
+import useLogin from "./hooks/useLogin";
 
 export function Login() {
-  const { register, onSubmit, errors, login } = useHandleLogin();
+  const { register, onSubmit, errors, login } = useLogin();
 
   return (
     <div className="w-full">

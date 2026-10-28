@@ -1,25 +1,24 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { register as registerRequest, type RegisterInput } from "@/api/auth";
-
 import { registerSchema, type RegisterValues } from "@/configs/schemas/auth";
 import { ApiError } from "@/lib/api/fetcher";
 import { applyApiErrors } from "@/lib/form-errors";
 
-export function useRegister() {
+function useRegisterMutation() {
   return useMutation({
     mutationFn: (values: RegisterInput) => registerRequest(values),
   });
 }
 
-function useHandleRegister() {
-  const registerMutation = useRegister();
+function useRegister() {
+  const registerMutation = useRegisterMutation();
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -83,4 +82,4 @@ function useHandleRegister() {
   };
 }
 
-export default useHandleRegister;
+export default useRegister;

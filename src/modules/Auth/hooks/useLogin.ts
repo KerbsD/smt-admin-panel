@@ -1,21 +1,19 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { login as loginRequest, type LoginInput } from "@/api/auth";
-import { useAuthStore } from "@/store/useAuthStore";
-
-import { useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { loginSchema, type LoginValues } from "@/configs/schemas/auth";
 import { ApiError } from "@/lib/api/fetcher";
 import { applyApiErrors } from "@/lib/form-errors";
 import { safeNextPath } from "@/lib/redirect";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuthStore } from "@/store/useAuthStore";
 
-function useLogin(nextPath = "/") {
+function useLoginMutation(nextPath: string) {
   const router = useRouter();
 
   return useMutation({
@@ -28,10 +26,10 @@ function useLogin(nextPath = "/") {
   });
 }
 
-function useHandleLogin() {
+function useLogin() {
   const searchParams = useSearchParams();
   const nextPath = safeNextPath(searchParams.get("next"));
-  const login = useLogin(nextPath);
+  const login = useLoginMutation(nextPath);
 
   const {
     register,
@@ -74,4 +72,4 @@ function useHandleLogin() {
   return { register, onSubmit, errors, login };
 }
 
-export default useHandleLogin;
+export default useLogin;

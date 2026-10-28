@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { AuthHeading, authLink } from "@/components/auth/auth-ui";
-import { ResendVerificationForm } from "@/modules/Auth/Misc/ResendVerificationForm";
+import { ResendVerificationForm } from "./components/ResendVerificationForm";
 
 export function ResendVerification() {
   const searchParams = useSearchParams();

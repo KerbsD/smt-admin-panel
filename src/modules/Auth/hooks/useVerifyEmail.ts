@@ -1,22 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
 import { verifyEmail as verifyEmailRequest } from "@/api/auth";
-
 import { useHashParam, useHydrated } from "@/lib/use-hash";
 
-export function useVerifyEmail() {
+function useVerifyEmailMutation() {
   return useMutation({
     mutationFn: (token: string) => verifyEmailRequest(token),
   });
 }
 
-function useHandleVerifyEmail() {
+function useVerifyEmail() {
   const token = useHashParam("token");
   const isHydrated = useHydrated();
-  const verify = useVerifyEmail();
+  const verify = useVerifyEmailMutation();
   const started = useRef(false);
   const { mutate } = verify;
 
@@ -38,4 +37,4 @@ function useHandleVerifyEmail() {
   };
 }
 
-export default useHandleVerifyEmail;
+export default useVerifyEmail;

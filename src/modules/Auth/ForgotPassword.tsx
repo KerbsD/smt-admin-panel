@@ -15,11 +15,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useHandleForgetPassword } from "./usePasswordFlows";
+import useForgotPassword from "./hooks/useForgotPassword";
 
 export function ForgotPassword() {
   const { onSubmit, sentMessage, register, errors, forgot } =
-    useHandleForgetPassword();
+    useForgotPassword();
 
   return (
     <div className="w-full space-y-5">
