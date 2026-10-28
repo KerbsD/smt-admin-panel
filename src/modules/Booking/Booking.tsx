@@ -1,6 +1,7 @@
 "use client";
 
 import { BookingDeleteDialog } from "./components/BookingDeleteDialog";
+import { BookingEmailDialog } from "./components/BookingEmailDialog";
 import { BookingFilters } from "./components/BookingFilters";
 import { BookingFormDialog } from "./components/BookingFormDialog";
 import { BookingPageHeader } from "./components/BookingPageHeader";
@@ -20,6 +21,8 @@ export default function Booking() {
     setEditing,
     deleting,
     setDeleting,
+    emailing,
+    setEmailing,
     deleteMutation,
     PAGE_SIZE,
     query,
@@ -69,6 +72,7 @@ export default function Booking() {
         hasFilters={hasFilters}
         onEdit={setEditing}
         onDelete={setDeleting}
+        onEmail={setEmailing}
         onPageChange={setPage}
         onClearFilters={clearFilters}
       />
@@ -80,6 +84,17 @@ export default function Booking() {
           open
           onOpenChange={(open) => {
             if (!open) setEditing(null);
+          }}
+        />
+      ) : null}
+
+      {emailing ? (
+        <BookingEmailDialog
+          key={emailing.id}
+          booking={emailing}
+          open
+          onOpenChange={(open) => {
+            if (!open) setEmailing(null);
           }}
         />
       ) : null}

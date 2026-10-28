@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   deleteBooking,
+  sendBookingStatusEmail,
   updateBooking,
   type BookingUpdateInput,
 } from "@/api/bookings";
@@ -15,6 +16,18 @@ export function useUpdateBooking() {
   return useMutation({
     mutationFn: ({ id, input }: { id: number; input: BookingUpdateInput }) =>
       updateBooking(id, input),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
+    },
+  });
+}
+
+export function useSendBookingStatusEmail() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, note }: { id: number; note?: string }) =>
+      sendBookingStatusEmail(id, { note }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
     },

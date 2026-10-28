@@ -28,6 +28,7 @@ function useHandleBookings() {
   const [status, setStatus] = useState<BookingStatus | "all">("all");
   const [editing, setEditing] = useState<Booking | null>(null);
   const [deleting, setDeleting] = useState<Booking | null>(null);
+  const [emailing, setEmailing] = useState<Booking | null>(null);
 
   const debouncedSearch = useDebouncedValue(search, 300);
   const deleteMutation = useDeleteBooking();
@@ -78,6 +79,8 @@ function useHandleBookings() {
     setEditing,
     deleting,
     setDeleting,
+    emailing,
+    setEmailing,
     deleteMutation,
     PAGE_SIZE,
     query,

@@ -21,6 +21,7 @@ interface BookingTableProps {
   hasFilters: boolean;
   onEdit: (booking: Booking) => void;
   onDelete: (booking: Booking) => void;
+  onEmail: (booking: Booking) => void;
   onPageChange: (page: number) => void;
   onClearFilters: () => void;
 }
@@ -34,6 +35,7 @@ export function BookingTable({
   hasFilters,
   onEdit,
   onDelete,
+  onEmail,
   onPageChange,
   onClearFilters,
 }: BookingTableProps) {
@@ -108,6 +110,7 @@ export function BookingTable({
                   booking={booking}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  onEmail={onEmail}
                 />
               ))}
             </tbody>
