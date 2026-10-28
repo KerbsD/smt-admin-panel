@@ -17,6 +17,8 @@ export interface Booking {
   message: string;
   status: BookingStatus;
   adminNote: string;
+  confirmationEmailSentAt: string | null;
+  cancellationEmailSentAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -8,6 +8,20 @@ export interface BookingUpdateInput {
   adminNote?: string;
 }
 
+export interface BookingStatusEmailInput {
+  note?: string;
+}
+
+export interface BookingStatusEmailResult {
+  status: BookingStatus;
+  sentAt: string;
+}
+
+export interface BookingStatusEmailResponse
+  extends ApiEnvelope<BookingStatusEmailResult> {
+  message: string;
+}
+
 export function listBookings(
   params: BookingListParams,
   signal?: AbortSignal,
@@ -27,6 +41,19 @@ export function updateBooking(
     method: "PATCH",
     body: input,
   });
+}
+
+export function sendBookingStatusEmail(
+  id: number,
+  input: BookingStatusEmailInput,
+): Promise<BookingStatusEmailResponse> {
+  return request<BookingStatusEmailResponse>(
+    `/admin/bookings/${id}/send-status-email`,
+    {
+      method: "POST",
+      body: input,
+    },
+  );
 }
 
 export function deleteBooking(id: number): Promise<MessageEnvelope> {
