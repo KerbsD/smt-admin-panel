@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard } from "@/components/ui/stat-card";
 import { formatBookingSlot, formatDate } from "@/lib/format";
 
-import { BookingStatusBadge } from "@/modules/Booking/BookingStatusBadge";
+import { BookingStatusBadge } from "@/modules/Booking/components/BookingStatusBadge";
 
 import useDashboard from "./useDashboard";
 

@@ -69,7 +69,7 @@ function useHandleResetPassword() {
     });
   });
 
-  return { onSubmit, errors, reset, token, isHydrated, register };k
+  return { onSubmit, errors, reset, token, isHydrated, register };
 }
 
 export default useHandleResetPassword;

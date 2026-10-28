@@ -1,14 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import type { BookingStatus } from "@/types/models";
 
+interface BookingStatusBadgeProps {
+  status: BookingStatus;
+}
+
 const variants: Record<
   BookingStatus,
-  "warning" | "info" | "success" | "muted"
+  "warning" | "info" | "success" | "destructive"
 > = {
   pending: "warning",
   confirmed: "info",
   completed: "success",
-  cancelled: "muted",
+  cancelled: "destructive",
 };
 
 const labels: Record<BookingStatus, string> = {
@@ -18,6 +22,6 @@ const labels: Record<BookingStatus, string> = {
   cancelled: "Cancelled",
 };
 
-export function BookingStatusBadge({ status }: { status: BookingStatus }) {
+export function BookingStatusBadge({ status }: BookingStatusBadgeProps) {
   return <Badge variant={variants[status]}>{labels[status]}</Badge>;
 }
